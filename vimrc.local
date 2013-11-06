@@ -1,0 +1,106 @@
+" samuele@valis-e.com Thu Aug  1 17:20:35 CEST 2013
+
+filetype plugin indent on
+
+autocmd FileType text setlocal sw=2 sts=8 et tw=79
+autocmd FileType html setlocal sw=1 sts=2 et
+autocmd FileType bash setlocal sw=2 sts=4 et tw=79 number
+
+set modeline
+set modelines=8
+
+" neat things for advanced usage
+syntax on
+set autoindent                  " copy indent from current line
+set autoread                    " read open files again when changed outside Vim
+set autowrite                   " write a modified buffer on each :next , ...  
+set nowritebackup               " no automatic backup
+set backspace=indent,eol,start  " backspacing over everything in insert mode   
+set browsedir=current           " which directory to use for the file browser  
+"set complete+=k                " scan the files given with the 'dictionary' option
+set history=50                  " keep 50 lines of command line history
+set ignorecase                  " Default to using case insensitive searches,  
+set smartcase                   " unless uppercase letters are used in the regex.
+set smarttab                    " Handle tabs more intelligently
+set hlsearch                    " highlight the last used search pattern
+set incsearch                   " do incremental searching
+" hide matches on <leader>space
+nnoremap <leader><space> :nohlsearch<cr>"
+set mouse-=a                    " no visual mode with mouse click
+set nowrap                      " do not wrap lines
+set popt=left:8pc,right:3pc     " print options
+set ruler                       " show the cursor position all the time
+set shiftwidth=2                " number of spaces to use for each step of indent
+set showcmd                     " display incomplete commands
+set showmatch                   " show matching brackets
+set smartindent                 " smart autoindenting when starting a new line 
+set visualbell                  " visual bell instead of beeping
+set wildignore=*.bak,*.o,*.e,*~ " wildmenu: ignore these extensions
+set wildmenu                    " command-line completion in an enhanced mode  
+set wildmode=longest,full       " bash-like wildmenu completion
+set cursorline
+set scrolloff=3                 " Keep 3 context lines above and below the cursor
+" automatically change window's cwd to file's dir
+set autochdir
+" real programmers use spaces instead of tabs
+set ts=4
+set sw=4
+set et
+colorscheme murphy
+" hilight from column 81 onward
+set textwidth=80
+set colorcolumn=+1
+hi ColorColumn guibg=#2d2d2d ctermbg=246
+
+" don't outdent hashes
+inoremap # #
+
+" autocomplete parenthesis, brackets and braces
+inoremap ( ()<Left>
+inoremap [ []<Left>
+inoremap { {}<Left>
+vnoremap ( s()<Esc>P
+vnoremap [ s[]<Esc>P
+vnoremap { s{}<Esc>P
+inoremap        '  '<Esc>:call QuoteInsertionWrapper("'")<CR>a
+inoremap        "  "<Esc>:call QuoteInsertionWrapper('"')<CR>a
+inoremap        `  `<Esc>:call QuoteInsertionWrapper('`')<CR>a
+
+" Add a second quote only if the left and the right character are not keyword
+" characters.
+function! QuoteInsertionWrapper (quote)
+        let     col     = col('.')
+        if getline('.')[col-2] !~ '\k' && getline('.')[col] !~ '\k'
+                normal ax
+                exe "normal r".a:quote."h"
+        end
+endfunction    " ----------  end of function QuoteInsertionWrapper  ----------
+
+" jump to the last position when reopening a file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") 
+    \| exe "normal! g'\"" | endif
+endif
+
+
+" pressing < or > will let you indent/unident selected lines 
+vnoremap < <gv
+vnoremap > >gv
+
+" some general-purpose useful key-bindings
+set pastetoggle=<F12>
+" Toggle line numbers and fold column for easy copying:
+nnoremap <F3> :set nonumber!<CR>:set foldcolumn=0<CR>
+" Toggle non-printing chars visualization
+nnoremap <F4> :set list!<CR>
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
+" delete all trailing whitespaces
+nmap <F5> :%s/\s\+$//<CR>
+
+" useful to exit all open buffers/tabs/viewports/whatever
+nmap za :qa<CR>
+
+" highlight the variable under the cursor
+hi MyCursorColor ctermbg=59 ctermfg=172
+autocmd CursorMoved * exe printf('match MyCursorColor /\V\<%s\>/', escape(expand('<cword>'), '/\'))
+
